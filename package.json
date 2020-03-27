@@ -1,0 +1,30 @@
+{
+	"name": "test-project-the-guardian",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"dependencies": {},
+	"devDependencies": {
+		"concurrently": "^5.1.0"
+	},
+	"scripts": {
+		"install-package:client": "cd client && npm install",
+		"install-package:server": "cd server && npm install",
+		"install-package": "concurrently \"npm run install-package:client\" \"npm run install-package:server\"",
+		"client": "cd client && npm start",
+		"server": "cd server && npm run development",
+		"start": "concurrently -n 'server,client' -c 'yellow,green' \"npm run server\" \"npm run client\"",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/icandid/test-project-the-guardian.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/icandid/test-project-the-guardian/issues"
+	},
+	"homepage": "https://github.com/icandid/test-project-the-guardian#readme"
+}
