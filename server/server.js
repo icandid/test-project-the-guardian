@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const fetch = require('node-fetch')
 const bodyParser = require('body-parser')
+const helmet = require('helmet')
 
 const RequestError = require('./utils/request-error')
 
@@ -11,6 +12,7 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(helmet())
 app.use(cors())
 
 function generateURL(route, queryString) {
@@ -29,9 +31,24 @@ function generateURL(route, queryString) {
 }
 
 app.get('/search', async (req, res) => {
+	const { q = '', page = 1, pageSize = 20, orderBy = 'newest' } = req.query
 	const url = generateURL('search', {
-		'show-fields': '',
+		q,
+		page,
+		'page-size': pageSize,
+		'order-by': orderBy,
+		'show-fields': 'thumbnail,trailText,starRating',
 	})
+
+	function hasNextPage(data) {
+		const { pageSize, currentPage, pages, results } = data
+
+		if (pages === 0 || currentPage === pages || results.length < pageSize) {
+			return false
+		}
+
+		return true
+	}
 
 	try {
 		const response = await fetch(url, {
@@ -41,9 +58,11 @@ app.get('/search', async (req, res) => {
 		const data = await response.json()
 
 		if (data.response.status === 'ok') {
+			const { results, currentPage } = data.response
 			return res.json({
-				data: data.response.results,
-				currentPage: data.response.currentPage,
+				data: results,
+				currentPage,
+				hasNextPage: hasNextPage(data.response),
 			})
 		}
 
@@ -57,20 +76,25 @@ app.get('/search', async (req, res) => {
 })
 
 app.get('/news', async (req, res) => {
-	if (!req.query.id) {
+	const id = req.query.id
+	if (!id) {
 		res.type('text/plain')
 		res.status(404)
 		return res.send('404 - Not Found')
 	}
 
-	const url = generateURL(req.query.id, {
-		'show-fields': 'all',
-	})
-
 	try {
-		const response = await fetch(url)
+		const response = await fetch(
+			generateURL(id, {
+				'show-fields': 'all',
+			})
+		)
 		const data = await response.json()
-		res.json(data)
+		if (data.response.status === 'ok') {
+			return res.json({
+				data: data.response.content,
+			})
+		}
 	} catch (error) {
 		console.log(error)
 		res.status(400).json({
