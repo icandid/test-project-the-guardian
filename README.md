@@ -1,4 +1,4 @@
-# Test projects: The Guardian
+# Test project: The Guardian
 
 ## Running locally
 
