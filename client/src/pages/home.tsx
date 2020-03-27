@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useRef, useReducer } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params'
+import { useDebounce } from '../hooks/use-debounce'
 import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
@@ -91,16 +92,17 @@ export const HomePage: React.FC = () => {
 		response: { ...initialResponse },
 		isError: false,
 	})
+	const debouncedQuery = useDebounce(query, 300)
 	const bottomBoundaryRef = useRef(null)
 
 	useInfiniteScroll(bottomBoundaryRef, () => {
-		const { page = 1 } = query
+		const { page = 1 } = debouncedQuery
 		setQuery({ page: page + 1 }, 'pushIn')
 	})
 
 	useEffect(() => {
 		let didCancel = false
-		const { page = 1, q = '', orderBy = 'newest' } = query
+		const { page = 1, q = '', orderBy = 'newest' } = debouncedQuery
 
 		const fetchData = async () => {
 			try {
@@ -122,7 +124,7 @@ export const HomePage: React.FC = () => {
 		return () => {
 			didCancel = true
 		}
-	}, [query])
+	}, [debouncedQuery])
 
 	function handleChangeSearch(e: any) {
 		dispatch({ type: 'RESET' })
@@ -165,9 +167,9 @@ export const HomePage: React.FC = () => {
 				</Select>
 			</Box>
 
-			{query.q?.trim() && (
+			{debouncedQuery.q?.trim() && (
 				<Typography variant="h6" component="p" gutterBottom>
-					Search results: {query.q}
+					Search results: {debouncedQuery.q}
 				</Typography>
 			)}
 
@@ -202,6 +204,8 @@ export const HomePage: React.FC = () => {
 					ref={bottomBoundaryRef}
 				/>
 			)}
+
+			<div style={{ height: 100 }} />
 		</Container>
 	)
 }
