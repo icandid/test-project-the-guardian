@@ -4,7 +4,8 @@
 
 ```
 git clone https://github.com/icandid/test-project-the-guardian.git
+
 cd test-project-the-guardian
-npm run install-package
-npm start
+
+npm i && npm run install-package && npm start
 ```
