@@ -5,7 +5,7 @@
 	"dependencies": {
 		"@material-ui/core": "^4.9.7",
 		"@material-ui/lab": "^4.0.0-alpha.46",
-		"react": "^0.0.0-experimental-aae83a4b9",
+		"react": "^0.14.0",
 		"react-dom": "^0.0.0-experimental-aae83a4b9",
 		"react-router-dom": "^5.1.2",
 		"react-scripts": "3.4.1",
