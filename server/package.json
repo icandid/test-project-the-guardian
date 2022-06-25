@@ -15,7 +15,7 @@
 		"cors": "^2.8.5",
 		"express": "^4.17.1",
 		"helmet": "^3.21.3",
-		"node-fetch": "^2.6.0",
+		"node-fetch": "^2.6.7",
 		"query-string": "^6.11.1"
 	},
 	"devDependencies": {
